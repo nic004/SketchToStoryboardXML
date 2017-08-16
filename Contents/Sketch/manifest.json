@@ -1,0 +1,24 @@
+{
+  "author" : "",
+  "commands" : [
+    {
+      "script" : "script.js",
+      "name" : "test",
+      "handlers" : {
+        "run" : "onRun"
+      },
+      "identifier" : "com.bohemiancoding.sketch.runscriptidentifier"
+    }
+  ],
+  "menu" : {
+    "title" : "test",
+    "items" : [
+      "com.bohemiancoding.sketch.runscriptidentifier"
+    ]
+  },
+  "identifier" : "com.example.sketch.09b599ea-e252-49a5-8f54-a344e38ac7ac",
+  "version" : "1.0",
+  "description" : "",
+  "authorEmail" : "",
+  "name" : "test"
+}
