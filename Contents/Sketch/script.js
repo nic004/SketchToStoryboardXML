@@ -1,3 +1,27 @@
+var onMulti = function (context) {
+  var documentName = context.document.displayName();
+  // log('The current document is named: ' + documentName);
+
+  var selectedLayers = context.selection;
+  var selectedCount = selectedLayers.count();
+
+  if (selectedCount == 0) {
+    log('No layers are selected.');
+  } else {
+    // log('Selected layers:');
+    for (var i = 0; i < selectedCount; i++) {
+      var layer = selectedLayers[i];
+      // log(`${layer.name()} - ${layer.class()}`);
+      var name = layer.name();
+
+      var layerClass = layer.class();
+      if (layer.class() == "MSLayerGroup") {
+        log(layer.layers());
+      }
+    }
+  }
+}
+
 var onLabel = function (context) {
   // log('This is an example Sketch script.');
 

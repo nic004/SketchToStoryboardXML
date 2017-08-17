@@ -3,6 +3,14 @@
   "commands" : [
     {
       "script" : "script.js",
+      "name" : "Multi",
+      "handlers" : {
+        "run" : "onMulti"
+      },
+      "identifier" : "com.bohemiancoding.sketch.multi"
+    },
+    {
+      "script" : "script.js",
       "name" : "Label",
       "handlers" : {
         "run" : "onLabel"
@@ -21,6 +29,7 @@
   "menu" : {
     "title" : "test",
     "items" : [
+      "com.bohemiancoding.sketch.multi",
       "com.bohemiancoding.sketch.label",
       "com.bohemiancoding.sketch.borderableButton"
     ]
