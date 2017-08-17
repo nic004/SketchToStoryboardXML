@@ -3,17 +3,26 @@
   "commands" : [
     {
       "script" : "script.js",
-      "name" : "test",
+      "name" : "Label",
       "handlers" : {
-        "run" : "onRun"
+        "run" : "onLabel"
       },
-      "identifier" : "com.bohemiancoding.sketch.runscriptidentifier"
+      "identifier" : "com.bohemiancoding.sketch.label"
+    },
+    {
+      "script" : "script.js",
+      "name" : "BorderableButton",
+      "handlers" : {
+        "run" : "onBorderableButton"
+      },
+      "identifier" : "com.bohemiancoding.sketch.borderableButton"
     }
   ],
   "menu" : {
     "title" : "test",
     "items" : [
-      "com.bohemiancoding.sketch.runscriptidentifier"
+      "com.bohemiancoding.sketch.label",
+      "com.bohemiancoding.sketch.borderableButton"
     ]
   },
   "identifier" : "com.example.sketch.09b599ea-e252-49a5-8f54-a344e38ac7ac",
