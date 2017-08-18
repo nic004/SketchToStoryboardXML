@@ -28,7 +28,7 @@ var onMulti = function (context) {
 
 function parseGroupLayer(groupLayer, tree = []) {
   if (isImageGroupLayer(groupLayer)) {
-    tree.push({type: 'image', name: groupLayer.name(), layer: groupLayer});
+    tree.push({type: 'image', name: groupLayer.name(), layer: groupLayer.class()});
   } else {
     let nodes = [];
     groupLayer.layers().forEach((layer) => {
@@ -40,28 +40,28 @@ function parseGroupLayer(groupLayer, tree = []) {
       }
       else if (clas == 'MSTextLayer') {
           log('handle textlayer');
-          nodes.push({type: 'text', text: layer.name(), layer: layer});
+          nodes.push({type: 'text', text: layer.name(), layer: layer.class()});
       }
       else if (clas == 'MSShapeLayer' || clas == 'MSShapeGroup') {
           log('handle shapelayer');
-          nodes.push({type: 'image', name: layer.name(), layer: layer});
+          nodes.push({type: 'image', name: layer.name(), layer: layer.class()});
       }
     });
-    tree.push({group: nodes})
+    tree.push({group: { name: groupLayer.name(), children:  nodes} });
   }
   return tree;
 }
 
 function isImageGroupLayer(groupLayer) {
-  if (groupLayer.layers().length <= 0) {
+  if (groupLayer.children().length <= 0) {
     return false;
   }
 
-  let layers = groupLayer.layers();
+  let layers = groupLayer.children();
   for (var i = 0; i < layers.count(); i++) {
     const c = layers[i].class();
     log(c);
-    if (c == 'MSLayerGroup' || c == 'MSTextLayer') {
+    if (c == 'MSTextLayer') {
       return false;
     }
   }
