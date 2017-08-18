@@ -1,3 +1,4 @@
+
 var onMulti = function (context) {
   var documentName = context.document.displayName();
   // log('The current document is named: ' + documentName);
@@ -11,15 +12,61 @@ var onMulti = function (context) {
     // log('Selected layers:');
     for (var i = 0; i < selectedCount; i++) {
       var layer = selectedLayers[i];
-      // log(`${layer.name()} - ${layer.class()}`);
+      // log((i + 1) + '. ' + layer.name());
       var name = layer.name();
 
-      var layerClass = layer.class();
-      if (layer.class() == "MSLayerGroup") {
+      if (layer.class() == 'MSLayerGroup') {
+        const tree = parseGroupLayer(layer);
+        // log(`${layer.class()} - ${layer.name()}`);
         log(layer.layers());
+        log('-------------------------------');
+        log(tree);
       }
     }
   }
+}
+
+function parseGroupLayer(groupLayer, tree = []) {
+  if (isImageGroupLayer(groupLayer)) {
+    tree.push({type: 'image', name: groupLayer.name(), layer: groupLayer});
+  } else {
+    let nodes = [];
+    groupLayer.layers().forEach((layer) => {
+      const clas = layer.class();
+      log(`clas = ${clas}`);
+      if (clas == 'MSLayerGroup') {
+        log('handle group');
+        parseGroupLayer(layer, nodes);
+      }
+      else if (clas == 'MSTextLayer') {
+          log('handle textlayer');
+          nodes.push({type: 'text', text: layer.name(), layer: layer});
+      }
+      else if (clas == 'MSShapeLayer' || clas == 'MSShapeGroup') {
+          log('handle shapelayer');
+          nodes.push({type: 'image', name: layer.name(), layer: layer});
+      }
+    });
+    tree.push({group: nodes})
+  }
+  return tree;
+}
+
+function isImageGroupLayer(groupLayer) {
+  if (groupLayer.layers().length <= 0) {
+    return false;
+  }
+
+  let layers = groupLayer.layers();
+  for (var i = 0; i < layers.count(); i++) {
+    const c = layers[i].class();
+    log(c);
+    if (c == 'MSLayerGroup' || c == 'MSTextLayer') {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 var onLabel = function (context) {
