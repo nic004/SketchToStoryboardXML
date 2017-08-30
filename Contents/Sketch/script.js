@@ -1,4 +1,3 @@
-
 var onMulti = function (context) {
   var documentName = context.document.displayName();
   // log('The current document is named: ' + documentName);
@@ -16,11 +15,12 @@ var onMulti = function (context) {
       var name = layer.name();
 
       if (layer.class() == 'MSLayerGroup') {
-        const tree = parseGroupLayer(layer);
+        const tree = parseGroupLayer(layer)[0];
         // log(`${layer.class()} - ${layer.name()}`);
         log(layer.layers());
         log('-------------------------------');
         log(tree);
+        writeJson(tree);
       }
     }
   }
@@ -28,7 +28,8 @@ var onMulti = function (context) {
 
 function parseGroupLayer(groupLayer, tree = []) {
   if (isImageGroupLayer(groupLayer)) {
-    tree.push({type: 'image', name: groupLayer.name(), layer: groupLayer.class()});
+    // tree.push({type: 'image', name: groupLayer.name(), layer: groupLayer.class()});
+    tree.push(imageJson(groupLayer));
   } else {
     let nodes = [];
     groupLayer.layers().forEach((layer) => {
@@ -40,16 +41,45 @@ function parseGroupLayer(groupLayer, tree = []) {
       }
       else if (clas == 'MSTextLayer') {
           log('handle textlayer');
-          nodes.push({type: 'text', text: layer.name(), layer: layer.class()});
+          nodes.push(textJson(layer));
       }
       else if (clas == 'MSShapeLayer' || clas == 'MSShapeGroup') {
           log('handle shapelayer');
-          nodes.push({type: 'image', name: layer.name(), layer: layer.class()});
+          nodes.push(imageJson(layer));
       }
     });
-    tree.push({group: { name: groupLayer.name(), children:  nodes} });
+
+    let groupLayerJson = layerJson(groupLayer);
+    tree.push(Object.assign({}, groupLayerJson, {children:  nodes}));
   }
   return tree;
+}
+
+function layerJson(layer) {
+  return {
+    name: `${layer.name()}`,
+    layer: `${layer.class()}`,
+    frame: {
+      x: layer.frame().x() / 2,
+      y: layer.frame().y() / 2,
+      width: layer.frame().width() / 2,
+      height: layer.frame().height() / 2
+    }    
+  };
+}
+
+function imageJson(layer) {
+  let json = layerJson(layer);
+  let imageJson = {
+    type: 'image', 
+  };
+  return Object.assign({}, json, imageJson);
+}
+
+function textJson(layer) {
+  let json = layerJson(layer);
+  let textJson = {type: 'text', text: `${layer.name()}`};
+  return Object.assign({}, json, textJson);
 }
 
 function isImageGroupLayer(groupLayer) {
@@ -68,6 +98,14 @@ function isImageGroupLayer(groupLayer) {
 
   return true;
 }
+
+function writeJson(json) {
+  var path = "/Users/nathan/Library/Application Support/com.bohemiancoding.sketch3/Plugins/test.sketchplugin/Contents/Sketch";
+  var file = NSString.stringWithString(JSON.stringify(json, null, "\t"));
+  [file writeToFile:[NSString stringWithFormat: "%@/sketch_layer_tree.json", path] atomically:true encoding:NSUTF8StringEncoding error:nil];
+}
+
+// ----------------------------------------------------------------------------------------------------------------------
 
 var onLabel = function (context) {
   // log('This is an example Sketch script.');
